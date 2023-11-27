@@ -1,125 +1,116 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-       <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/style.css">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-    <title>car car prediction</title>
+    <title>Car Price Prediction</title>
   </head>
   <body class="bg-dark">
-  <<div class="container">
+    <div class="container">
       <div class="row">
-        <div class="card mt-50" style="width :100%; height:100%">
-          <div class="card-header" style="text-align: center">
+        <div class="card mt-5" style="width: 100%; height: 100%;">
+          <div class="card-header" style="text-align: center;">
             <div class="col-12">
               <h1>Welcome to the Car Predictor</h1>
             </div>
-            <div class="card-body">
+          </div>
+          <div class="card-body">
+            <form method="post"  accept-charset="utf-8" onsubmit="send_data(); return false;">
+              <div class="col-12 form-group" style="text-align: center;">
+                <label><b>Select Company:</b></label>
+                <select class="selectpicker form-control" id="company" name="company" required="1" onchange="Load_car_model('company', 'car_model')">
+                  {% for company in companies %}
+                  <option value="{{company}}">{{company}}</option>
+                  {% endfor %}
+                </select>
+              </div>
 
-              <form method="post" action ="#" accept-charset="utf-8">
+              <div class="col-12 form-group" style="text-align: center;">
+                <label><b>Select model:</b></label>
+                <select class="selectpicker form-control" id="car_model" name="car_model" required="1"></select>
+              </div>
 
-                <div class="col-18 form-group" style="text-align: center">
-                  <label><b>Select Company:</b></label>
-                  <select class="selectpicker form-control" id="company" name="company" required="1" onchange="Load_car_model(this.id,'car_model')" >
-                    {% for company in companies %}
-                    <option value="{{company}}">{{company}}</option>
-                    {% endfor %}
-                  </select>
-                </div>
+              <div class="col-12 form-group" style="text-align: center;">
+                <label><b>Select Year of Purchase:</b></label>
+                <select class="selectpicker form-control" id="year" name="year" required="1">
+                  {% for purchase in year %}
+                  <option value="{{purchase}}">{{purchase}}</option>
+                  {% endfor %}
+                </select>
+              </div>
 
-                <div class="col-18 form-group" style="text-align: center">
-                  <label><b>Select model:</b></label>
-                  <select class="selectpicker form-control" id="car_model" name="car_model" required="1">
-                    {% for model in car_models %}
-                    <option value="{{model}}">{{model}}</option>
-                    {% endfor %}
-                  </select>
-                </div>
+              <div class="col-12 form-group" style="text-align: center;">
+                <label><b>Select Fuel type:</b></label>
+                <select class="selectpicker form-control" id="fuel_type" name="fuel_type" required="1">
+                  {% for fuel in fuel_type %}
+                  <option value="{{fuel}}">{{fuel}}</option>
+                  {% endfor %}
+                </select>
+              </div>
 
-                <div class="col-18 form-group" style="text-align: center">
-                  <label><b>Select Year of Purchase:</b></label>
-                  <select class="selectpicker form-control" id="year" name="year" required="1">
-                    {% for purchase in year %}
-                    <option value="{{purchase}}">{{purchase}}</option>
-                    {% endfor %}
-                  </select>
-                </div>
+              <div class="col-12 form-group" style="text-align: center;">
+                <label><b>Enter the Number of Kilometres that the car has travelled:</b></label><br>
+                <input type="text" class="form-control" id="kilo_driven" name="kilo_driven" placeholder="Enter the kilometres driven">
+              </div>
 
-                <div class="col-18 form-group" style="text-align: center">
-                  <label><b>Select Fuel type :</b></label>
-                  <select class="selectpicker form-control" id="fuel_type" name="fuel_type" required="1">
-                   {% for fuel in fuel_type %}
-                    <option value="{{fuel}}">{{fuel}}</option>
-                    {% endfor %}
-                  </select>
-                </div>
+              <button type="submit" class="btn btn-primary form-control">Predict Price</button>
+            </form>
 
-                <div class="col-md-18 form-group" style="text-align: center">
-                        <label><b>Enter the Number of Kilometres that the car has travelled:</b> </label><br>
-                        <input type="text" class="form-control" id="kilo_driven" name="kilo_driven"
-                               placeholder="Enter the kilometres driven ">
-                    </div>
-                 <button class="btn btn-primary form-control" onclick="send_data()">Predict Price</button>
+            <br>
 
-              </form>
-              <br>
-               <div class="row">
-
-               </div>
-
+            <div class="row">
+              <div class="col-12" style="text-align: center;">
+                <h3><span id="prediction"></span></h3>
+              </div>
             </div>
 
           </div>
         </div>
       </div>
-   <</div>
-  <script>
-     function Load_car_model(company_id,car_model_id)
-     {
-       var company = document.getElementById(company_id);
-       var car_model = document.getElementById(car_model_id);
-       car_model.value="";
-       car_model.innerHTML="";
+    </div>
+
+    <script>
+      function Load_car_model(company_id, car_model_id) {
+        var company = document.getElementById(company_id);
+        var car_model = document.getElementById(car_model_id);
+        car_model.value = "";
+        car_model.innerHTML = "";
         console.log(company.value);
-       {% for company in companies %}
-
-         if(company.value=="{{company}}")
-          {
-             {% for model in car_models %}
-
-                {% if company in model %}
-
-                  var newOption = document.createElement("option");
-                  newOption.value ="{{ model}}";
-                  newOption.innerHTML="{{ model}}";
-                  car_model.options.add(newOption);
-
-                {% endif %}
-
-             {% endfor %}
-         }
-
-      {% endfor %}
-     }
-     function form_handler(event)
-     {
-       event.preventDefault();
+        {% for company in companies %}
+        if (company.value == "{{company}}") {
+          {% for model in car_models %}
+          {% if company in model %}
+          var newOption = document.createElement("option");
+          newOption.value = "{{model}}";
+          newOption.innerHTML = "{{model}}";
+          car_model.options.add(newOption);
+          {% endif %}
+          {% endfor %}
+        }
+        {% endfor %}
       }
-     function send_data()
-     {
-       document.querySelector('form').addEventListener('submit',form_handler);
-      // supress from default behaviour
-      var fd= new Formdata(document.querySelector('Form'));
 
-      var xhr = new XMLHttpRequest();
+      function send_data() {
+        var fd = new FormData(document.querySelector('form'));
 
-      xhr.open('Post','/predict',true);
-     }
-  </script>
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', '/predict', true);
+        document.getElementById("prediction").innerHTML = "Wait! Predicting Price...";
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == XMLHttpRequest.DONE) {
+            document.getElementById("prediction").innerHTML = "Predicting Price is RS: " + xhr.responseText;
+          }
+        };
+        xhr.onload = function(){};
+        xhr.send(fd);
+      }
+    </script>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
