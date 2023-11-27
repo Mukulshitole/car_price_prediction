@@ -58,14 +58,18 @@
                   </select>
                 </div>
 
-                <div class="col-18 form-group" style="text-align: center">
-                  <label><b>Enter Number of Kilometers travelled :</b></label>
-                   <input type="text" id="Kilo_driven" name="Kilo_driven" placeholder="Enter no of Kilometers Travelled">
-                    <option value=""></option>
-                  </select>
-                </div>
-                 <button class="btn btn-primary form-control" onclick="">Predict Price</button>
+                <div class="col-md-18 form-group" style="text-align: center">
+                        <label><b>Enter the Number of Kilometres that the car has travelled:</b> </label><br>
+                        <input type="text" class="form-control" id="kilo_driven" name="kilo_driven"
+                               placeholder="Enter the kilometres driven ">
+                    </div>
+                 <button class="btn btn-primary form-control" onclick="send_data()">Predict Price</button>
+
               </form>
+              <br>
+               <div class="row">
+
+               </div>
 
             </div>
 
@@ -76,9 +80,44 @@
   <script>
      function Load_car_model(company_id,car_model_id)
      {
-      var company = document.getElementById(company_id);
-      var car_model = document.getElementById(car_model_id);
-      console.log(company.value);
+       var company = document.getElementById(company_id);
+       var car_model = document.getElementById(car_model_id);
+       car_model.value="";
+       car_model.innerHTML="";
+        console.log(company.value);
+       {% for company in companies %}
+
+         if(company.value=="{{company}}")
+          {
+             {% for model in car_models %}
+
+                {% if company in model %}
+
+                  var newOption = document.createElement("option");
+                  newOption.value ="{{ model}}";
+                  newOption.innerHTML="{{ model}}";
+                  car_model.options.add(newOption);
+
+                {% endif %}
+
+             {% endfor %}
+         }
+
+      {% endfor %}
+     }
+     function form_handler(event)
+     {
+       event.preventDefault();
+      }
+     function send_data()
+     {
+       document.querySelector('form').addEventListener('submit',form_handler);
+      // supress from default behaviour
+      var fd= new Formdata(document.querySelector('Form'));
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('Post','/predict',true);
      }
   </script>
     <!-- Optional JavaScript -->
